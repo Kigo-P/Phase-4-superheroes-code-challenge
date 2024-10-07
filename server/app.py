@@ -99,6 +99,7 @@ def get_powers_by_id(id):
                 power.description = description
             # commiting to the database if the power has been updated and throwing an error if it has not been updated
             if power:
+                db.session.add(power)
                 db.session.commit()
                 # creating a dictionary
                 power_dict = power.to_dict()
