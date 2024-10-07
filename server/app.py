@@ -84,11 +84,35 @@ def get_powers_by_id(id):
             response = make_response(power_dict, 200)
             return response
         elif request.method == "PATCH":
-            # creating a dict object with a description
-            power_dict = {
-                "description" : request.form.get("description")
-            }
-            pass
+            # getting data from the request
+            data = request.get_json()
+            # getting the description
+            description = data.get("description")
+            # checking if the description has a minimum length of 20 characters- if not so then raise an error
+            if len(description) < 20:
+                response_body = {
+                "errors": ["validation errors"]
+                }
+                response = make_response(response_body, 400)
+                return response
+            else:
+                power.description = description
+            # commiting to the database if the power has been updated and throwing an error if it has not been updated
+            if power:
+                db.session.commit()
+                # creating a dictionary
+                power_dict = power.to_dict()
+
+                # creating a response 
+                response = make_response(power_dict, 200)
+                return response
+            else:
+                response_body = {
+                "errors": ["validation errors"]
+                }
+                response = make_response(response_body, 400)
+                return response
+
 
 # creating a method that posts the heroes
 @app.route("/hero_powers", methods = ["POST"])
